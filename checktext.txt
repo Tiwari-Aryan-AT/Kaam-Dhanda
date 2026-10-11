@@ -1,0 +1,97 @@
+Prompt 1:
+"""
+Go through this file
+1 sheet contains ~2k rows (data dump)
+2nd sheet contains Issuer/Company x URL combinations
+In 2nd sheet, first 99 rows have been evaluated manually. Drop the NOTES column as it is blank and a redundant header.
+COMMENTS Action CORRECTED_URL CORRECTED_ISSUER_ID REMARKS - headers manually updated after checking each URL and all assets under that URL
+Go through this file, understand what has been done and your inference on it
+Before you start, share a plan of the steps you’ll take for resolving the remaining ~800 rows of Sheet2 so I can review it.
+"""
+
+Response:
+"""
+I haven't started on the remaining rows. Here is what I found in the file and the plan I'd follow, for you to review.
+
+## What I found
+
+**Structure**
+- Sheet2 has 884 rows but only 691 unique issuer×URL combinations. These match the combinations in "Full data" exactly.
+- Your 99 reviewed rows are 95 BUWOG URLs, plus Tekkie Town, Powercor, Unilin and Zhongtai.
+- The unreviewed ~785 rows are 592 unique combinations across 176 issuers. About 193 rows are repeats of the same combination (EDL has the same URL on 9 rows, for example), so there are about 592 real checks.
+- Column H is also blank and has no header, like NOTES, so I'd drop both.
+
+**What your manual pass did**
+- 96 of the 99 rows were marked CORRECTION NEEDED. Only 2 were confirmed correct, and 1 was an individual-case row.
+- Action outcomes:
+  - Revert to Parent: 59 rows, plus 1 combined with a URL update. These rows were corrected to issuer ID IID000000002670264.
+  - DROP: 36 rows. 33 are sold-out BUWOG projects, 2 are inaccessible listing pages, and 1 is Powercor, which has no USA assets.
+  - URL Update: 1 row (Tekkie Town, where the listed page shows no stores and the store-locator page does).
+  - Retain as is: 1 row (Zhongtai).
+- The Revert-to-Parent remark says the page names BUWOG Bauträger GmbH, which isn't in secmaster, so you mapped it up the hierarchy. I couldn't verify what 2670264 is, because there is no secmaster file in this session.
+
+**What I infer**
+- In "Full data", all 99 reviewed rows were already marked FP and CONFIRMED by the upstream "manually confirmed via research" step. Your URL-by-URL review overturned almost all of them. The upstream Final_* columns are not reliable for these Manual_Review rows, so I wouldn't use them as ground truth for the rest.
+- The 99 are not a representative sample. 95 are one issuer, and in 107 of the 109 asset rows the pipeline's suggested issuer equalled the original.
+- The remaining set looks different:
+  - 544 asset rows have a different pipeline-suggested issuer, such as Carglass NZ → LASER, Maxim's → Starbucks Japan, Dairy Farm → Wellcome, and Jardine → Pizza Hut. These need remap verification, not just retain or drop.
+  - Some clusters are huge but sit on one or two URLs: Kruidvat (518 rows, 1 URL), Rossmann (179), Lifan (128 rows, 2 URLs), Pou Chen Vietnam (85), and Excelcomindo (70). One decision there covers many assets.
+  - Some clusters are the reverse: Wanda has 137 URLs and Brokk 86.
+
+## Proposed plan
+
+1. **Prep.** Drop NOTES and column H. Work on the 592 unique combinations, then copy each decision back to all matching Sheet2 rows. Join each URL to its context from "Full data": assets, countries, activities, the pipeline suggestion, and domicile mismatch.
+2. **Triage without web lookups.** Sort the combinations into buckets:
+   - Pipeline kept the issuer and the URL consistency check was clean: retain candidates.
+   - Pipeline suggested a different issuer: remap candidates.
+   - Country implausible for the issuer (the Powercor pattern): anomaly candidates.
+   - Project, reference or dealer pages: out of scope under your standing policies.
+   - Listing pages and large clusters: handled once per URL.
+3. **Accessibility check.** Probe each URL in tiers. Only URLs that still fail after the tiers go to you.
+4. **Evidence per URL.** Use first-party or official sources only. For each URL, check:
+   - whether the page shows assets;
+   - which legal entity it names;
+   - who owns each facility, and whether the owner is in secmaster with its own URL (otherwise the closest parent with a URL);
+   - JV, owner-versus-operator, and divested or sold-out status.
+5. **Apply your BUWOG precedents consistently** and reuse your existing columns and vocabulary: COMMENTS, Action (Retain as is, Revert to Parent, URL Update, DROP, individual cases), CORRECTED_URL, CORRECTED_ISSUER_ID and REMARKS. Every non-retain row gets a one-line remark with its proof link. Where assets under one URL split between outcomes (as with Unilin), I flag them as individual cases.
+6. **Run in checkpoints,** issuer by issuer, so you can stop and review at any point.
+7. **QA.**
+   - Re-check about 10% of the retain and drop calls.
+   - Review every low-confidence call.
+   - Confirm every CORRECTED_ISSUER_ID exists in secmaster and the hierarchy files.
+   - Check that every Action has its required fields filled.
+8. **Deliverables.** The completed Sheet2, plus a standalone log file of the rules and decisions so it carries over to other sessions and LLMs.
+
+## Questions for your review
+- Can you share the secmaster parquet and the two hierarchy files? Without them I can't validate corrected issuer IDs.
+- Should I run the web checks myself (browser or search), or write the Python pipeline and the rulebook while you run the checks?
+- Should the 1 to 2 URL mega-clusters get a single decision each, or do you want an asset-level check inside them?
+
+I also saved a short note on this review to memory.
+"""
+
+follow-up prompt to response:
+"""
+"1 was an individual-case row" - check the final column of the Data sheet for the cases having this URL. I manually checked presence of each asset on the URL and if they are actually present and belong to the mentioned issuer (2 France cases did, so retained, 1 DEU case didn't so mentioned as DROP) - you need to do the same for cases where on a single URL there are multiple assets and multiple decisions need to be taken.
+There are cases as well where you may need to update information of the data specific row - I only encountered cases where I had to update URL and Issuer ID, so Sheet 2 as of now contains only those two CORRECTED_* columns, make sure to append more as and when needed. COMMENTS and Action are chosen from a set of fixed list of options (multiple comma separated possible as well) for proper bucketing. Exact reasoning goes into Remarks, which accepts Freetext in Sheet2.
+On Proposed Plan:
+
+1. Sure, but only columns A-L and columns BP-BT need to be used, rest may give a false positivr
+2. NO TRIAGE - WE NEED TO DO WEB LOOKUPS AND VERIFY FROM THE WEBSITE ITSELF
+3. Yes, whatever you're able to reach and work on properly (something I should be able to replicate as well) - we solve those here. For remaining cases, we try making use of an Agent like Cursor first, with cases not being resolved there as well being flagged for me to work on
+4. Yes, you can make use of a recent Claude chat titled "BUWOG Group asset verification" to get reference of how asset-level analysis was done
+5. Yes
+6. Sure
+7. Yes
+8. Yes
+
+
+Questions for review:
+
+1. Sure, will share whatever I have
+2. Run web checks yourself (Claude in Chrome will fail, web search should help) - unresolved cases to be solved via an Agentic route (local Cursor/codex may be able to access these) - still unresolved raised for manual review as mentioned before
+3. Asset-level check IS DEFINITELY needed, (NO CLUSTER LEVEL DECISIONS) but this can be done smartly - in case of same URL, you can first check if all assets are present on the URL and are in scope and good to be retained, then check on URL level, like I did with the BUWOG cases
+
+
+Sharing all reference files that may come in use for this, along with attaching a folder for you to work on where you can save your progress at checkpoints, provide progress updates while autonomously continuing this process end to end.
+"""
