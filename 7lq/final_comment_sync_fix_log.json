@@ -1,0 +1,16 @@
+[
+  {
+    "facility_id": "143823a7e93d652f0815e1c27fbb22dc",
+    "field": "COMMENT",
+    "old": "Closed via validated cross-reference to another session's RemapSubset M3-issuer-verification workbook (2,209 rows, dated 17-Nov-2026), spot-checked against live web evidence before bulk application (17-Nov-2026 resume). RemapSubset: Facility 'Claitec C/ Pic de Peguera' is listed on claitec.com, the assigned issuer's own site (FQDN MATCH); assigned issuer is linked under the Input Issuer in secmaster; facility name is consistent with the assigned entity. Assigned issuer owns/operates the facility and M3 v3.2 collects it at this ID (O7). [Ownership_Confidence=High; Evidence=https://claitec.com/en/contact/]",
+    "new": "Closed via validated cross-reference to another session's RemapSubset M3-issuer-verification workbook (2,209 rows, dated 17-Nov-2026), spot-checked against live web evidence before bulk application (17-Nov-2026 resume). RemapSubset: Facility 'Claitec C/ Pic de Peguera' is listed on claitec.com, the assigned issuer's own site (FQDN MATCH); assigned issuer is linked under the Input Issuer in secmaster; facility name is consistent with the assigned entity. Assigned issuer owns/operates the facility and M3 v3.2 collects it at this ID (O7). [Ownership_Confidence=High; Evidence=https://claitec.com/en/contact/]  || T9/Sample audit FALSE POSITIVE, verified clean: sample subagent flagged Claitec Solutions SL (IID000000005509461) site footer now reading 'Troax Active Safety Spain S.L.U.' post-acquisition rebranding",
+    "reason": "turn13_full_log_audit: syncing Turn-9 false-positive verification note into COMMENT"
+  },
+  {
+    "facility_id": "98987d1cc6ccf2e6606a83af007435b2",
+    "field": "COMMENT",
+    "old": "Closed via validated cross-reference to another session's RemapSubset M3-issuer-verification workbook (2,209 rows, dated 17-Nov-2026), spot-checked against live web evidence before bulk application (17-Nov-2026 resume). RemapSubset: Facility 'phs Group (Leeds)' is listed on phs.co.uk, the assigned issuer's own site (FQDN MATCH); assigned issuer is linked under the Input Issuer in secmaster; facility name is consistent with the assigned entity. Assigned issuer owns/operates the facility and M3 v3.2 collects it at this ID (O7). [Ownership_Confidence=High; Evidence=https://www.phs.co.uk/hygiene-services-locations/leeds/]",
+    "new": "Closed via validated cross-reference to another session's RemapSubset M3-issuer-verification workbook (2,209 rows, dated 17-Nov-2026), spot-checked against live web evidence before bulk application (17-Nov-2026 resume). RemapSubset: Facility 'phs Group (Leeds)' is listed on phs.co.uk, the assigned issuer's own site (FQDN MATCH); assigned issuer is linked under the Input Issuer in secmaster; facility name is consistent with the assigned entity. Assigned issuer owns/operates the facility and M3 v3.2 collects it at this ID (O7). [Ownership_Confidence=High; Evidence=https://www.phs.co.uk/hygiene-services-locations/leeds/]  || T9/Sample audit FALSE POSITIVE, verified clean: sample subagent flagged phs Group (Leeds) site footer naming 'Personnel Hygiene Services Limited' rather than the assigned issuer 'PHS GROUP LIMITED'. s",
+    "reason": "turn13_full_log_audit: syncing Turn-9 false-positive verification note into COMMENT"
+  }
+]
